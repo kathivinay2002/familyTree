@@ -193,3 +193,22 @@ h1{
 
 /* small footer */
 footer{ margin-top:14px; text-align:center; color:var(--muted); font-size:13px }
+
+/* SQL playground styles */
+.sql-playground{ margin:20px 0; background:#fff; padding:12px; border-radius:10px; box-shadow: var(--shadow); }
+.sql-playground textarea{ width:100%; box-sizing:border-box; font-family:monospace; font-size:13px; margin-top:8px; }
+.sql-playground .sql-actions{ margin-top:8px; display:flex; gap:8px; }
+.sql-table{ width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; }
+.sql-table th, .sql-table td{ border:1px solid #e6e6e6; padding:8px 10px; text-align:left; vertical-align:top; }
+.sql-table thead{ background:#f3f4f6; font-weight:600; }
+
+/* results wrapper: make it scrollable when needed */
+.sql-results .results-wrap{ width:100%; }
+.sql-results .results-wrap.scrollable{ max-height:360px; overflow-y:auto; }
+
+/* Make sure the page shows a scrollbar when content overflows */
+html, body { overflow: auto; }
+
+/* optional: style for scrollbar (WebKit) */
+.sql-results .results-wrap.scrollable::-webkit-scrollbar{ width:10px; }
+.sql-results .results-wrap.scrollable::-webkit-scrollbar-thumb{ background:rgba(15,23,42,0.12); border-radius:8px; }
