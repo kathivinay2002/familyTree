@@ -6,6 +6,10 @@
   --accent:#2563eb;
   --shadow: 0 6px 18px rgba(15,23,42,0.08);
   --radius:10px;
+  /* female palette */
+  --female-card:#fff0f6;       /* pale pink card background */
+  --female-avatar-start:#ff85c0;
+  --female-avatar-end:#ff4d9e;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
@@ -113,10 +117,20 @@ h1{
 /* info */
 .info .name{ font-weight:600; font-size:15px; color:#071024 }
 .info .role{ font-size:12px; color:var(--muted); margin-top:4px }
+.info .gender{ font-size:12px; color:var(--muted); margin-top:4px }
 
 /* modifiers */
 .parent .avatar{ background:linear-gradient(135deg,#0ea5e9,#6366f1) }
 .child .avatar{ background:linear-gradient(135deg,#10b981,#059669) }
+
+/* female-specific styling: pink card background + pink avatar gradient */
+.person[data-gender="female"]{
+  background: linear-gradient(180deg, rgba(255,245,250,0.9), var(--female-card));
+}
+.person[data-gender="female"] .avatar{
+  background: linear-gradient(135deg, var(--female-avatar-start), var(--female-avatar-end));
+  color: #3b0920; /* darker text on pale avatar for contrast */
+}
 
 /* responsive */
 @media (max-width:560px){
