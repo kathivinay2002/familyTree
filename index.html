@@ -8,18 +8,19 @@
 </head>
 <body>
   <main>
+    <!-- Auth panel: sign in / user info -->
+    <div id="auth-panel" style="display:flex;justify-content:flex-end;gap:12px;align-items:center;margin-bottom:12px;">
+      <div id="auth-links">
+        <a id="signin-link" href="login.html" style="background:var(--accent);color:#fff;padding:6px 10px;border-radius:6px;text-decoration:none;">Sign in</a>
+      </div>
+    </div>
+
     <h1>Kathi Family</h1>
 
     <section class="family-tree" aria-label="Kathi family tree">
       <div class="parents">
         <div class="person parent" data-role="Father" data-gender="male" id="parent-1" tabindex="0" title="Double-click to edit name">
-          <div class="avatar">
-            <img class="avatar-photo" alt="Kathi Vinay Kumar photo" src="" aria-hidden="true" />
-            <div class="initials">KV</div>
-            <input class="avatar-input" type="file" accept="image/*" aria-label="Upload photo" />
-            <button class="upload-photo-btn" type="button" aria-label="Upload photo">Upload</button>
-            <button class="remove-photo-btn" type="button" aria-label="Remove photo">✕</button>
-          </div>
+          <div class="avatar">KV</div>
           <div class="info">
             <div class="name">Kathi Vinay Kumar</div>
             <div class="role">Father</div>
@@ -28,13 +29,7 @@
         </div>
 
         <div class="person parent" data-role="Mother" data-gender="female" id="parent-2" tabindex="0" title="Double-click to edit name">
-          <div class="avatar">
-            <img class="avatar-photo" alt="Thriveni Bakki photo" src="" aria-hidden="true" />
-            <div class="initials">TB</div>
-            <input class="avatar-input" type="file" accept="image/*" aria-label="Upload photo" />
-            <button class="upload-photo-btn" type="button" aria-label="Upload photo">Upload</button>
-            <button class="remove-photo-btn" type="button" aria-label="Remove photo">✕</button>
-          </div>
+          <div class="avatar">TB</div>
           <div class="info">
             <div class="name">Thriveni Bakki</div>
             <div class="role">Mother</div>
@@ -47,13 +42,7 @@
 
       <div class="children" aria-label="Children">
         <div class="person child" data-gender="female" id="child-1" tabindex="0" title="Double-click to edit name">
-          <div class="avatar">
-            <img class="avatar-photo" alt="Akshayani Kathi photo" src="" aria-hidden="true" />
-            <div class="initials">A</div>
-            <input class="avatar-input" type="file" accept="image/*" aria-label="Upload photo" />
-            <button class="upload-photo-btn" type="button" aria-label="Upload photo">Upload</button>
-            <button class="remove-photo-btn" type="button" aria-label="Remove photo">✕</button>
-          </div>
+          <div class="avatar">A</div>
           <div class="info">
             <div class="name">Akshayani Kathi</div>
             <div class="role">Child</div>
@@ -62,13 +51,7 @@
         </div>
 
         <div class="person child" data-gender="male" id="child-2" tabindex="0" title="Double-click to edit name">
-          <div class="avatar">
-            <img class="avatar-photo" alt="Rishi Vikyath Kathi photo" src="" aria-hidden="true" />
-            <div class="initials">R</div>
-            <input class="avatar-input" type="file" accept="image/*" aria-label="Upload photo" />
-            <button class="upload-photo-btn" type="button" aria-label="Upload photo">Upload</button>
-            <button class="remove-photo-btn" type="button" aria-label="Remove photo">✕</button>
-          </div>
+          <div class="avatar">R</div>
           <div class="info">
             <div class="name">Rishi Vikyath Kathi</div>
             <div class="role">Child</div>
@@ -78,48 +61,34 @@
       </div>
     </section>
 
-    <!-- Random Joke Generator -->
-    <section class="joke" aria-label="Random joke generator">
-      <h2>Random Joke</h2>
-      <div class="joke-container">
-        <p id="joke-text">Click the button to load a joke.</p>
-        <div class="joke-actions">
-          <button id="new-joke" type="button">Get a random joke</button>
-          <button id="share-joke" type="button" aria-label="Share joke" hidden>Share</button>
-        </div>
-      </div>
-    </section>
-
     <footer>
       <p>Tip: Double-click a name to edit it. Hold Tab to focus nodes for accessibility. Genders are shown under each name; female cards have a pink background.</p>
     </footer>
   </main>
 
-  <!-- Image editor modal (shared) -->
-  <div id="img-editor" class="img-editor" aria-hidden="true">
-    <div class="img-editor-backdrop"></div>
-    <div class="img-editor-panel" role="dialog" aria-modal="true" aria-label="Edit avatar photo">
-      <header>
-        <h3>Edit photo</h3>
-      </header>
-      <div class="img-editor-body">
-        <div class="img-editor-viewport">
-          <canvas id="editor-canvas" width="320" height="320" aria-label="Image editor canvas"></canvas>
-        </div>
-        <div class="img-editor-controls">
-          <label class="control">
-            Zoom
-            <input id="editor-zoom" type="range" min="1" max="3" step="0.01" value="1" />
-          </label>
-          <div class="control-buttons">
-            <button id="editor-reset" type="button">Reset</button>
-            <button id="editor-cancel" type="button">Cancel</button>
-            <button id="editor-save" type="button">Save</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <script src="auth.js"></script>
+  <script>
+    // Update auth panel UI on page load; do not auto-redirect to login page.
+    (function(){
+      function renderAuthPanel(){
+        const links = document.getElementById('auth-links');
+        if (!links) return;
+        const user = sessionStorage.getItem('kathiUser');
+        if (user) {
+          links.innerHTML = `\n            <span style="font-size:14px;color:#0b1220">Signed in as <strong>${user}</strong></span>\n            <button id="logout-btn" style="background:#ef4444;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">Logout</button>\n          `;
+          const btn = document.getElementById('logout-btn');
+          if (btn) btn.addEventListener('click', () => { window.authLogout(); });
+        } else {
+          // show sign-in link (already present in HTML)
+          links.innerHTML = '<a id="signin-link" href="login.html" style="background:var(--accent);color:#fff;padding:6px 10px;border-radius:6px;text-decoration:none;">Sign in</a>';
+        }
+      }
+      // run on load
+      renderAuthPanel();
+      // also update when storage changes in other tabs
+      window.addEventListener('storage', renderAuthPanel);
+    })();
+  </script>
 
   <script src="script.js"></script>
 </body>
