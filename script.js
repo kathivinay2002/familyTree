@@ -86,16 +86,8 @@
           alasql('DROP DATABASE IF EXISTS ktDB; CREATE DATABASE ktDB; USE ktDB;');
         } catch(e){ console.warn('could not drop/create database', e); }
 
-        // derive all columns from users array
-        const cols = Array.from(new Set(users.flatMap(u => Object.keys(u))));
-        // create users table with columns of type TEXT
-        const colDefs = cols.map(c => `["+c+" ]`).join(',');
-        // Build a safe CREATE TABLE statement by quoting identifiers
-        const createCols = cols.map(c => `[
-          ${c}
-        ]`).join(',');
         // Fallback: create a flexible table and then insert
-        alasql('CREATE TABLE users;');
+        try{ alasql('CREATE TABLE IF NOT EXISTS users;'); } catch(e){ /* ignore */ }
         if (users.length) {
           // ensure table is empty
           try{ alasql('DELETE FROM users'); } catch(e){}
@@ -103,7 +95,7 @@
         }
         // debug: count rows
         let cnt = 0;
-        try{ const cres = alasql('SELECT COUNT(*) AS cnt FROM users'); cnt = (Array.isArray(cres) && cres[0] && cres[0].cnt) ? cres[0].cnt : 0; } catch(e){ console.warn('count failed', e); }
+        try{ const cres = alasql('SELECT COUNT(*) AS cnt FROM users'); cnt = (Array.isArray(cres) && cres[0] && (cres[0].cnt || cres[0].c)) ? (cres[0].cnt || cres[0].c) : 0; } catch(e){ console.warn('count failed', e); }
         console.log('loadDB: users.json loaded, rows=', users.length, 'inserted=', cnt);
       }
 
@@ -112,13 +104,30 @@
     } catch(err){ console.error(err); msgEl && (msgEl.textContent = 'Error loading DB: ' + err.message); throw err; }
   };
 
+  // ensure database is loaded before running a query
+  async function ensureDBLoaded() {
+    if (!window.alasql) throw new Error('AlaSQL not available');
+    try {
+      const cntRes = alasql('SELECT COUNT(*) AS c FROM users');
+      const cnt = Array.isArray(cntRes) && cntRes[0] ? (cntRes[0].c || cntRes[0].cnt || 0) : 0;
+      if (cnt === 0) {
+        await window.loadDB();
+      }
+    } catch (e) {
+      // table may not exist yet
+      await window.loadDB();
+    }
+  }
+
   function renderResults(rows){ const resultsEl = document.getElementById('sql-results'); if (!resultsEl) return; resultsEl.innerHTML=''; if (!rows || rows.length===0){ resultsEl.textContent='(no rows)'; return; } // create wrapper
     const wrap = document.createElement('div'); wrap.className = 'results-wrap'; if (rows.length > 5) wrap.classList.add('scrollable'); // table
     const table = document.createElement('table'); table.className = 'sql-table'; const thead = document.createElement('thead'); const headerRow = document.createElement('tr'); const cols = Object.keys(rows[0]); cols.forEach(col=>{ const th = document.createElement('th'); th.textContent = col; headerRow.appendChild(th); }); thead.appendChild(headerRow); table.appendChild(thead); const tbody = document.createElement('tbody'); rows.forEach(r=>{ const tr = document.createElement('tr'); cols.forEach(col=>{ const td = document.createElement('td'); const val = r[col]; td.textContent = val===null||val===undefined ? '' : String(val); tr.appendChild(td); }); tbody.appendChild(tr); }); table.appendChild(tbody); wrap.appendChild(table); resultsEl.appendChild(wrap); }
 
-  window.runSQL = function(){ const sqlInput = document.getElementById('sql-input'); const msgEl = document.getElementById('sql-message'); const sql = (sqlInput && sqlInput.value||'').trim(); if (!sql){ msgEl && (msgEl.textContent = 'Enter a SQL query.'); return; } msgEl && (msgEl.textContent='Executing...'); try{ const verb = sql.split(/\s+/)[0].toUpperCase(); if (verb !== 'SELECT' && verb !== 'EXPLAIN' && verb !== 'PRAGMA') { msgEl && (msgEl.textContent = 'Only read-only SELECT/EXPLAIN/PRAGMA queries are allowed.'); return; } const res = alasql(sql);
+  window.runSQL = async function(){ const sqlInput = document.getElementById('sql-input'); const msgEl = document.getElementById('sql-message'); const sql = (sqlInput && sqlInput.value||'').trim(); if (!sql){ msgEl && (msgEl.textContent = 'Enter a SQL query.'); return; } msgEl && (msgEl.textContent='Executing...'); try{ const verb = sql.split(/\s+/)[0].toUpperCase(); if (verb !== 'SELECT' && verb !== 'EXPLAIN' && verb !== 'PRAGMA') { msgEl && (msgEl.textContent = 'Only read-only SELECT/EXPLAIN/PRAGMA queries are allowed.'); return; } // ensure DB loaded
+    try{ await ensureDBLoaded(); } catch(e){ console.warn('ensureDBLoaded failed', e); }
+    const res = alasql(sql);
     // Debug: log result type and length
-    console.log('runSQL result:', res);
+    console.log('runSQL result (raw):', res);
     let rows = [];
     if (Array.isArray(res)) rows = res;
     else if (res && Array.isArray(res.data)) rows = res.data;
