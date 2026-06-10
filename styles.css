@@ -116,12 +116,26 @@ h1{
   overflow:hidden;
 }
 
-.avatar img{ /* when a photo is uploaded */
+/* photo preview: hidden by default, absolutely positioned to fully cover the circle */
+.avatar img{
+  display:none;
+  position:absolute;
+  inset:0; /* top:0; right:0; bottom:0; left:0; */
   width:100%;
   height:100%;
-  display:block;
   object-fit:cover;
   border-radius:50%;
+}
+
+/* initials fallback: centered inside the circle */
+.avatar .initials{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100%;
 }
 
 .avatar .remove-photo-btn{
@@ -138,6 +152,9 @@ h1{
   display:none;
 }
 
+/* when a photo is present show it and hide initials */
+.avatar.has-photo img{ display:block; }
+.avatar.has-photo .initials{ display:none; }
 .avatar.has-photo .remove-photo-btn{ display:block }
 
 /* info */
