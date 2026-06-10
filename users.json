@@ -1,1 +1,24 @@
-{"users":[{"userId":"kathi","password":"family123"},{"userId":"guest","password":"guest"}]}
+{
+  "users": [
+    {
+      "userId": "kathi",
+      "password": "family123",
+      "firstName": "Kathi",
+      "lastName": "Kumar",
+      "address": "123 Kathi Street, Hyderabad",
+      "zipCode": "500081",
+      "mobileNumber": "+919876543210",
+      "maritalStatus": "Married"
+    },
+    {
+      "userId": "guest",
+      "password": "guest",
+      "firstName": "Guest",
+      "lastName": "User",
+      "address": "",
+      "zipCode": "",
+      "mobileNumber": "",
+      "maritalStatus": "Single"
+    }
+  ]
+}
