@@ -95,6 +95,32 @@
     </footer>
   </main>
 
+  <!-- Image editor modal (shared) -->
+  <div id="img-editor" class="img-editor" aria-hidden="true">
+    <div class="img-editor-backdrop"></div>
+    <div class="img-editor-panel" role="dialog" aria-modal="true" aria-label="Edit avatar photo">
+      <header>
+        <h3>Edit photo</h3>
+      </header>
+      <div class="img-editor-body">
+        <div class="img-editor-viewport">
+          <canvas id="editor-canvas" width="320" height="320" aria-label="Image editor canvas"></canvas>
+        </div>
+        <div class="img-editor-controls">
+          <label class="control">
+            Zoom
+            <input id="editor-zoom" type="range" min="1" max="3" step="0.01" value="1" />
+          </label>
+          <div class="control-buttons">
+            <button id="editor-reset" type="button">Reset</button>
+            <button id="editor-cancel" type="button">Cancel</button>
+            <button id="editor-save" type="button">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
