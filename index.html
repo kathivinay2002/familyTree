@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kathi Family Tree</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main>
+    <h1>Kathi Family</h1>
+
+    <section class="family-tree" aria-label="Kathi family tree">
+      <div class="parents">
+        <div class="person parent" data-role="Father" id="parent-1" tabindex="0" title="Double-click to edit name">
+          <div class="avatar">KV</div>
+          <div class="info">
+            <div class="name">Kathi Vinay Kumar</div>
+            <div class="role">Father</div>
+          </div>
+        </div>
+
+        <div class="person parent" data-role="Mother" id="parent-2" tabindex="0" title="Double-click to edit name">
+          <div class="avatar">TB</div>
+          <div class="info">
+            <div class="name">Thriveni Bakki</div>
+            <div class="role">Mother</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="connector"></div>
+
+      <div class="children" aria-label="Children">
+        <div class="person child" id="child-1" tabindex="0" title="Double-click to edit name">
+          <div class="avatar">A</div>
+          <div class="info">
+            <div class="name">Akshayani Kathi</div>
+            <div class="role">Child</div>
+          </div>
+        </div>
+
+        <div class="person child" id="child-2" tabindex="0" title="Double-click to edit name">
+          <div class="avatar">R</div>
+          <div class="info">
+            <div class="name">Rishi Vikyath Kathi</div>
+            <div class="role">Child</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Tip: Double-click a name to edit it. Hold Tab to focus nodes for accessibility.</p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
