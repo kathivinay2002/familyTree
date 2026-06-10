@@ -79,8 +79,34 @@
       const res = await fetch('users.json',{cache:'no-store'});
       if (!res.ok) throw new Error('Failed to load users.json');
       const db = await res.json(); const users = db.users || [];
-      // reset DB
-      if (window.alasql){ alasql('CREATE DATABASE IF NOT EXISTS ktDB; USE ktDB; DROP TABLE IF EXISTS users; CREATE TABLE users;'); if (users.length) alasql('INSERT INTO users SELECT * FROM ?',[users]); }
+
+      // reset AlaSQL database completely and recreate table with consistent columns
+      if (window.alasql){
+        try{
+          alasql('DROP DATABASE IF EXISTS ktDB; CREATE DATABASE ktDB; USE ktDB;');
+        } catch(e){ console.warn('could not drop/create database', e); }
+
+        // derive all columns from users array
+        const cols = Array.from(new Set(users.flatMap(u => Object.keys(u))));
+        // create users table with columns of type TEXT
+        const colDefs = cols.map(c => `["+c+" ]`).join(',');
+        // Build a safe CREATE TABLE statement by quoting identifiers
+        const createCols = cols.map(c => `[
+          ${c}
+        ]`).join(',');
+        // Fallback: create a flexible table and then insert
+        alasql('CREATE TABLE users;');
+        if (users.length) {
+          // ensure table is empty
+          try{ alasql('DELETE FROM users'); } catch(e){}
+          alasql('INSERT INTO users SELECT * FROM ?', [users]);
+        }
+        // debug: count rows
+        let cnt = 0;
+        try{ const cres = alasql('SELECT COUNT(*) AS cnt FROM users'); cnt = (Array.isArray(cres) && cres[0] && cres[0].cnt) ? cres[0].cnt : 0; } catch(e){ console.warn('count failed', e); }
+        console.log('loadDB: users.json loaded, rows=', users.length, 'inserted=', cnt);
+      }
+
       msgEl && (msgEl.textContent = `Loaded ${users.length} users.`);
       resultsEl && (resultsEl.innerHTML='');
     } catch(err){ console.error(err); msgEl && (msgEl.textContent = 'Error loading DB: ' + err.message); throw err; }
@@ -90,7 +116,16 @@
     const wrap = document.createElement('div'); wrap.className = 'results-wrap'; if (rows.length > 5) wrap.classList.add('scrollable'); // table
     const table = document.createElement('table'); table.className = 'sql-table'; const thead = document.createElement('thead'); const headerRow = document.createElement('tr'); const cols = Object.keys(rows[0]); cols.forEach(col=>{ const th = document.createElement('th'); th.textContent = col; headerRow.appendChild(th); }); thead.appendChild(headerRow); table.appendChild(thead); const tbody = document.createElement('tbody'); rows.forEach(r=>{ const tr = document.createElement('tr'); cols.forEach(col=>{ const td = document.createElement('td'); const val = r[col]; td.textContent = val===null||val===undefined ? '' : String(val); tr.appendChild(td); }); tbody.appendChild(tr); }); table.appendChild(tbody); wrap.appendChild(table); resultsEl.appendChild(wrap); }
 
-  window.runSQL = function(){ const sqlInput = document.getElementById('sql-input'); const msgEl = document.getElementById('sql-message'); const sql = (sqlInput && sqlInput.value||'').trim(); if (!sql){ msgEl && (msgEl.textContent = 'Enter a SQL query.'); return; } msgEl && (msgEl.textContent='Executing...'); try{ const verb = sql.split(/\s+/)[0].toUpperCase(); if (verb !== 'SELECT' && verb !== 'EXPLAIN' && verb !== 'PRAGMA') { msgEl && (msgEl.textContent = 'Only read-only SELECT/EXPLAIN/PRAGMA queries are allowed.'); return; } const res = alasql(sql); if (Array.isArray(res)){ renderResults(res); msgEl && (msgEl.textContent = `Returned ${res.length} row(s).`); } else { renderResults(Array.isArray(res.data)?res.data:[res]); msgEl && (msgEl.textContent = 'Query returned a result.'); } } catch(err){ console.error('SQL error',err); msgEl && (msgEl.textContent = 'SQL error: ' + err.message); } };
+  window.runSQL = function(){ const sqlInput = document.getElementById('sql-input'); const msgEl = document.getElementById('sql-message'); const sql = (sqlInput && sqlInput.value||'').trim(); if (!sql){ msgEl && (msgEl.textContent = 'Enter a SQL query.'); return; } msgEl && (msgEl.textContent='Executing...'); try{ const verb = sql.split(/\s+/)[0].toUpperCase(); if (verb !== 'SELECT' && verb !== 'EXPLAIN' && verb !== 'PRAGMA') { msgEl && (msgEl.textContent = 'Only read-only SELECT/EXPLAIN/PRAGMA queries are allowed.'); return; } const res = alasql(sql);
+    // Debug: log result type and length
+    console.log('runSQL result:', res);
+    let rows = [];
+    if (Array.isArray(res)) rows = res;
+    else if (res && Array.isArray(res.data)) rows = res.data;
+    else if (res && typeof res === 'object') rows = [res];
+    renderResults(rows);
+    msgEl && (msgEl.textContent = `Returned ${rows.length} row(s).`);
+  } catch(err){ console.error('SQL error',err); msgEl && (msgEl.textContent = 'SQL error: ' + err.message); } };
 
   // wire SQL UI
   document.addEventListener('DOMContentLoaded', ()=>{
