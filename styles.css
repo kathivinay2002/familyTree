@@ -112,7 +112,33 @@ h1{
   font-weight:700;
   font-size:18px;
   flex-shrink:0;
+  position:relative;
+  overflow:hidden;
 }
+
+.avatar img{ /* when a photo is uploaded */
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  border-radius:50%;
+}
+
+.avatar .remove-photo-btn{
+  position:absolute;
+  top:4px;
+  right:4px;
+  background:rgba(0,0,0,0.5);
+  color:white;
+  border:none;
+  border-radius:4px;
+  padding:2px 6px;
+  font-size:11px;
+  cursor:pointer;
+  display:none;
+}
+
+.avatar.has-photo .remove-photo-btn{ display:block }
 
 /* info */
 .info .name{ font-weight:600; font-size:15px; color:#071024 }
@@ -130,6 +156,15 @@ h1{
 .person[data-gender="female"] .avatar{
   background: linear-gradient(135deg, var(--female-avatar-start), var(--female-avatar-end));
   color: #3b0920; /* darker text on pale avatar for contrast */
+}
+
+/* Rishi-specific styling: blue card background + blue avatar gradient */
+.person#child-2{
+  background: linear-gradient(180deg, rgba(235,246,255,0.95), #e6f2ff);
+}
+.person#child-2 .avatar{
+  background: linear-gradient(135deg, #60a5fa, #2563eb);
+  color: white;
 }
 
 /* responsive */
