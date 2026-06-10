@@ -13,7 +13,13 @@
     <section class="family-tree" aria-label="Kathi family tree">
       <div class="parents">
         <div class="person parent" data-role="Father" data-gender="male" id="parent-1" tabindex="0" title="Double-click to edit name">
-          <div class="avatar">KV</div>
+          <div class="avatar">
+            <img class="avatar-photo" alt="Kathi Vinay Kumar photo" src="" aria-hidden="true" />
+            <div class="initials">KV</div>
+            <input class="avatar-input" type="file" accept="image/*" aria-label="Upload photo" />
+            <button class="upload-photo-btn" type="button" aria-label="Upload photo">Upload</button>
+            <button class="remove-photo-btn" type="button" aria-label="Remove photo">✕</button>
+          </div>
           <div class="info">
             <div class="name">Kathi Vinay Kumar</div>
             <div class="role">Father</div>
@@ -22,7 +28,13 @@
         </div>
 
         <div class="person parent" data-role="Mother" data-gender="female" id="parent-2" tabindex="0" title="Double-click to edit name">
-          <div class="avatar">TB</div>
+          <div class="avatar">
+            <img class="avatar-photo" alt="Thriveni Bakki photo" src="" aria-hidden="true" />
+            <div class="initials">TB</div>
+            <input class="avatar-input" type="file" accept="image/*" aria-label="Upload photo" />
+            <button class="upload-photo-btn" type="button" aria-label="Upload photo">Upload</button>
+            <button class="remove-photo-btn" type="button" aria-label="Remove photo">✕</button>
+          </div>
           <div class="info">
             <div class="name">Thriveni Bakki</div>
             <div class="role">Mother</div>
@@ -35,7 +47,13 @@
 
       <div class="children" aria-label="Children">
         <div class="person child" data-gender="female" id="child-1" tabindex="0" title="Double-click to edit name">
-          <div class="avatar">A</div>
+          <div class="avatar">
+            <img class="avatar-photo" alt="Akshayani Kathi photo" src="" aria-hidden="true" />
+            <div class="initials">A</div>
+            <input class="avatar-input" type="file" accept="image/*" aria-label="Upload photo" />
+            <button class="upload-photo-btn" type="button" aria-label="Upload photo">Upload</button>
+            <button class="remove-photo-btn" type="button" aria-label="Remove photo">✕</button>
+          </div>
           <div class="info">
             <div class="name">Akshayani Kathi</div>
             <div class="role">Child</div>
@@ -44,12 +62,30 @@
         </div>
 
         <div class="person child" data-gender="male" id="child-2" tabindex="0" title="Double-click to edit name">
-          <div class="avatar">R</div>
+          <div class="avatar">
+            <img class="avatar-photo" alt="Rishi Vikyath Kathi photo" src="" aria-hidden="true" />
+            <div class="initials">R</div>
+            <input class="avatar-input" type="file" accept="image/*" aria-label="Upload photo" />
+            <button class="upload-photo-btn" type="button" aria-label="Upload photo">Upload</button>
+            <button class="remove-photo-btn" type="button" aria-label="Remove photo">✕</button>
+          </div>
           <div class="info">
             <div class="name">Rishi Vikyath Kathi</div>
             <div class="role">Child</div>
             <div class="gender">Gender: Male</div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Random Joke Generator -->
+    <section class="joke" aria-label="Random joke generator">
+      <h2>Random Joke</h2>
+      <div class="joke-container">
+        <p id="joke-text">Click the button to load a joke.</p>
+        <div class="joke-actions">
+          <button id="new-joke" type="button">Get a random joke</button>
+          <button id="share-joke" type="button" aria-label="Share joke" hidden>Share</button>
         </div>
       </div>
     </section>
