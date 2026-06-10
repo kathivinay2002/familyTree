@@ -5,13 +5,30 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kathi Family Tree</title>
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* simple modal styles for login */
+    .modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,0.45); display:none; align-items:center; justify-content:center; z-index:60 }
+    .modal{ background:#fff; padding:18px; border-radius:10px; width:320px; box-shadow:0 8px 32px rgba(0,0,0,0.12) }
+    .modal h3{ margin:0 0 8px 0 }
+    .modal label{ display:block; margin-top:8px; font-size:13px }
+    .modal input{ width:100%; padding:8px; margin-top:6px; box-sizing:border-box }
+    .modal .actions{ display:flex; gap:8px; margin-top:12px; justify-content:flex-end }
+
+    /* SQL playground small tweaks */
+    .sql-playground{ margin:20px 0; background:#fff; padding:12px; border-radius:10px; box-shadow: var(--shadow); }
+    .sql-playground textarea{ width:100%; box-sizing:border-box; font-family:monospace; font-size:13px; margin-top:8px; }
+    .sql-playground .sql-actions{ margin-top:8px; display:flex; gap:8px; }
+    .sql-table{ width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; }
+    .sql-table th, .sql-table td{ border:1px solid #e6e6e6; padding:8px 10px; text-align:left; vertical-align:top; }
+    .sql-table thead{ background:#f3f4f6; font-weight:600; }
+  </style>
 </head>
 <body>
   <main>
     <!-- Auth panel: sign in / user info -->
     <div id="auth-panel" style="display:flex;justify-content:flex-end;gap:12px;align-items:center;margin-bottom:12px;">
       <div id="auth-links">
-        <a id="signin-link" href="login.html" style="background:var(--accent);color:#fff;padding:6px 10px;border-radius:6px;text-decoration:none;">Sign in</a>
+        <button id="signin-btn" style="background:var(--accent);color:#fff;padding:6px 10px;border-radius:6px;border:none;cursor:pointer;">Sign in</button>
       </div>
     </div>
 
@@ -20,7 +37,13 @@
     <section class="family-tree" aria-label="Kathi family tree">
       <div class="parents">
         <div class="person parent" data-role="Father" data-gender="male" id="parent-1" tabindex="0" title="Double-click to edit name">
-          <div class="avatar">KV</div>
+          <div class="avatar">
+            <img class="avatar-photo" alt="Kathi Vinay Kumar photo" src="" aria-hidden="true" />
+            <div class="initials">KV</div>
+            <input class="avatar-input" type="file" accept="image/*" aria-label="Upload photo" />
+            <button class="upload-photo-btn" type="button" aria-label="Upload photo">Upload</button>
+            <button class="remove-photo-btn" type="button" aria-label="Remove photo">✕</button>
+          </div>
           <div class="info">
             <div class="name">Kathi Vinay Kumar</div>
             <div class="role">Father</div>
@@ -29,7 +52,13 @@
         </div>
 
         <div class="person parent" data-role="Mother" data-gender="female" id="parent-2" tabindex="0" title="Double-click to edit name">
-          <div class="avatar">TB</div>
+          <div class="avatar">
+            <img class="avatar-photo" alt="Thriveni Bakki photo" src="" aria-hidden="true" />
+            <div class="initials">TB</div>
+            <input class="avatar-input" type="file" accept="image/*" aria-label="Upload photo" />
+            <button class="upload-photo-btn" type="button" aria-label="Upload photo">Upload</button>
+            <button class="remove-photo-btn" type="button" aria-label="Remove photo">✕</button>
+          </div>
           <div class="info">
             <div class="name">Thriveni Bakki</div>
             <div class="role">Mother</div>
@@ -42,7 +71,13 @@
 
       <div class="children" aria-label="Children">
         <div class="person child" data-gender="female" id="child-1" tabindex="0" title="Double-click to edit name">
-          <div class="avatar">A</div>
+          <div class="avatar">
+            <img class="avatar-photo" alt="Akshayani Kathi photo" src="" aria-hidden="true" />
+            <div class="initials">A</div>
+            <input class="avatar-input" type="file" accept="image/*" aria-label="Upload photo" />
+            <button class="upload-photo-btn" type="button" aria-label="Upload photo">Upload</button>
+            <button class="remove-photo-btn" type="button" aria-label="Remove photo">✕</button>
+          </div>
           <div class="info">
             <div class="name">Akshayani Kathi</div>
             <div class="role">Child</div>
@@ -51,7 +86,13 @@
         </div>
 
         <div class="person child" data-gender="male" id="child-2" tabindex="0" title="Double-click to edit name">
-          <div class="avatar">R</div>
+          <div class="avatar">
+            <img class="avatar-photo" alt="Rishi Vikyath Kathi photo" src="" aria-hidden="true" />
+            <div class="initials">R</div>
+            <input class="avatar-input" type="file" accept="image/*" aria-label="Upload photo" />
+            <button class="upload-photo-btn" type="button" aria-label="Upload photo">Upload</button>
+            <button class="remove-photo-btn" type="button" aria-label="Remove photo">✕</button>
+          </div>
           <div class="info">
             <div class="name">Rishi Vikyath Kathi</div>
             <div class="role">Child</div>
@@ -61,35 +102,58 @@
       </div>
     </section>
 
+    <!-- SQL playground (hidden until DB is loaded or user signed in) -->
+    <section class="sql-playground" aria-label="SQL query playground">
+      <h2>Query Users Database (SQL)</h2>
+
+      <div class="sql-controls">
+        <select id="sample-query">
+          <option value="">— sample queries —</option>
+          <option value="SELECT * FROM users">SELECT * FROM users</option>
+          <option value="SELECT userId, firstName, lastName FROM users WHERE maritalStatus='Married'">Married users</option>
+          <option value="SELECT userId, mobileNumber FROM users WHERE zipCode='500081'">Users in 500081</option>
+          <option value="SELECT COUNT(*) AS count FROM users">User count</option>
+        </select>
+
+        <button id="load-db" type="button">Reload DB</button>
+      </div>
+
+      <textarea id="sql-input" rows="5" placeholder="Write a SQL query (e.g. SELECT * FROM users WHERE lastName='Kumar')"></textarea>
+
+      <div class="sql-actions">
+        <button id="run-sql" type="button">Run SQL</button>
+        <button id="clear-results" type="button">Clear Results</button>
+      </div>
+
+      <div id="sql-message" role="status" aria-live="polite"></div>
+      <div id="sql-results" class="sql-results" aria-live="polite"></div>
+    </section>
+
     <footer>
       <p>Tip: Double-click a name to edit it. Hold Tab to focus nodes for accessibility. Genders are shown under each name; female cards have a pink background.</p>
     </footer>
   </main>
 
-  <script src="auth.js"></script>
-  <script>
-    // Update auth panel UI on page load; do not auto-redirect to login page.
-    (function(){
-      function renderAuthPanel(){
-        const links = document.getElementById('auth-links');
-        if (!links) return;
-        const user = sessionStorage.getItem('kathiUser');
-        if (user) {
-          links.innerHTML = `\n            <span style="font-size:14px;color:#0b1220">Signed in as <strong>${user}</strong></span>\n            <button id="logout-btn" style="background:#ef4444;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">Logout</button>\n          `;
-          const btn = document.getElementById('logout-btn');
-          if (btn) btn.addEventListener('click', () => { window.authLogout(); });
-        } else {
-          // show sign-in link (already present in HTML)
-          links.innerHTML = '<a id="signin-link" href="login.html" style="background:var(--accent);color:#fff;padding:6px 10px;border-radius:6px;text-decoration:none;">Sign in</a>';
-        }
-      }
-      // run on load
-      renderAuthPanel();
-      // also update when storage changes in other tabs
-      window.addEventListener('storage', renderAuthPanel);
-    })();
-  </script>
+  <!-- Login modal -->
+  <div id="login-modal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Sign in">
+      <h3>Sign in</h3>
+      <form id="login-form">
+        <label for="login-user">User ID</label>
+        <input id="login-user" name="user" type="text" autocomplete="username" required />
+        <label for="login-pass">Password</label>
+        <input id="login-pass" name="pass" type="password" autocomplete="current-password" required />
+        <div id="login-error" style="color:#b91c1c;margin-top:8px;display:none"></div>
+        <div class="actions">
+          <button id="login-cancel" type="button">Cancel</button>
+          <button id="login-submit" type="submit" style="background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;">Sign in</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
+  <script src="auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alasql@1.7/dist/alasql.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
