@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kathi Family — Sign in</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body{ display:flex; align-items:center; justify-content:center; min-height:100vh; background:var(--bg); margin:0; }
+    .login-card{ background:#fff; padding:20px; border-radius:12px; box-shadow:var(--shadow); width:320px; }
+    .login-card h2{ margin:0 0 12px 0; font-size:18px }
+    .login-card label{ display:block; margin-top:8px; font-size:13px }
+    .login-card input{ width:100%; padding:8px; margin-top:6px; box-sizing:border-box }
+    .login-actions{ display:flex; gap:8px; justify-content:flex-end; margin-top:12px }
+    .link-back{ display:block; margin-top:10px; text-align:center; font-size:13px; color:var(--muted); }
+    #login-error{ color:#b91c1c; margin-top:8px; display:none }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <h2>Sign in to Kathi Family Tree</h2>
+    <form id="login-form">
+      <label for="login-user">User ID</label>
+      <input id="login-user" name="user" type="text" autocomplete="username" required />
+      <label for="login-pass">Password</label>
+      <input id="login-pass" name="pass" type="password" autocomplete="current-password" required />
+      <div id="login-error"></div>
+      <div class="login-actions">
+        <button type="button" id="cancel-btn">Cancel</button>
+        <button type="submit" id="submit-btn" style="background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:6px;">Sign in</button>
+      </div>
+    </form>
+    <a class="link-back" href="index.html">Back to Kathi Family</a>
+  </div>
+
+  <script>
+    // Client-side demo auth: validate users.json and store session in sessionStorage
+    document.getElementById('cancel-btn').addEventListener('click', ()=>{ window.location.href = 'index.html'; });
+
+    const loginForm = document.getElementById('login-form');
+    const errorEl = document.getElementById('login-error');
+
+    loginForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      errorEl.style.display = 'none';
+      const userId = (document.getElementById('login-user')||{}).value?.trim()||'';
+      const password = (document.getElementById('login-pass')||{}).value||'';
+      if (!userId || !password) { errorEl.textContent = 'Enter user ID and password'; errorEl.style.display = 'block'; return; }
+
+      try {
+        const res = await fetch('users.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('Could not load user database');
+        const db = await res.json();
+        const user = (db.users || []).find(u => u.userId === userId && u.password === password);
+        if (!user) { errorEl.textContent = 'Invalid user ID or password'; errorEl.style.display = 'block'; return; }
+
+        // store session and profile
+        sessionStorage.setItem('kathiUser', user.userId);
+        sessionStorage.setItem('kathiUserProfile', JSON.stringify(user));
+
+        // redirect back to main page with SQL playground
+        // use relative path so it stays on the same domain (workers.dev)
+        window.location.href = 'index.html';
+      } catch (err) {
+        console.error(err);
+        errorEl.textContent = 'Login error: ' + (err.message || err);
+        errorEl.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
