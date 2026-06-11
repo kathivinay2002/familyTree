@@ -163,4 +163,111 @@
     document.addEventListener('DOMContentLoaded', ()=>{ showOrHideSQL(); }); window.addEventListener('storage', showOrHideSQL);
   })();
 
+
+// --- Draw SVG connectors/arrows between parents and children ---
+function createSVGOverlay(){
+  const tree = document.querySelector('.family-tree');
+  if (!tree) return null;
+  // ensure positioned container
+  if (!tree.style.position) tree.style.position = 'relative';
+  let svg = tree.querySelector('svg.family-connectors');
+  if (!svg){
+    svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.classList.add('family-connectors');
+    svg.setAttribute('aria-hidden','true');
+    svg.style.position = 'absolute';
+    svg.style.left = '0';
+    svg.style.top = '0';
+    svg.style.width = '100%';
+    svg.style.height = '100%';
+    svg.style.overflow = 'visible';
+    svg.style.pointerEvents = 'none';
+    tree.appendChild(svg);
+  }
+  return svg;
+}
+function clearSVG(svg){ while(svg && svg.firstChild) svg.removeChild(svg.firstChild); }
+
+function drawParentChildConnectors(){
+  const svg = createSVGOverlay();
+  if (!svg) return;
+  clearSVG(svg);
+
+  const parent1 = document.getElementById('parent-1');
+  const parent2 = document.getElementById('parent-2');
+  const child1 = document.getElementById('child-1');
+  const child2 = document.getElementById('child-2');
+  if (!parent1 || !parent2 || !child1 || !child2) return;
+
+  const rectTree = document.querySelector('.family-tree').getBoundingClientRect();
+  const p1 = parent1.getBoundingClientRect();
+  const p2 = parent2.getBoundingClientRect();
+  const c1 = child1.getBoundingClientRect();
+  const c2 = child2.getBoundingClientRect();
+
+  // coordinates relative to the .family-tree element
+  const offsetX = rectTree.left + window.scrollX;
+  const offsetY = rectTree.top + window.scrollY;
+
+  const p1cx = p1.left + window.scrollX + p1.width/2 - offsetX;
+  const p2cx = p2.left + window.scrollX + p2.width/2 - offsetX;
+  const parentsBottom = Math.max(p1.bottom, p2.bottom) + window.scrollY - offsetY;
+
+  const c1cx = c1.left + window.scrollX + c1.width/2 - offsetX;
+  const c2cx = c2.left + window.scrollX + c2.width/2 - offsetX;
+  const childrenTop = Math.min(c1.top, c2.top) + window.scrollY - offsetY;
+
+  const horizontalY = parentsBottom + 10; // y for horizontal connector
+
+  // horizontal line between parents
+  const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+  line.setAttribute('x1', p1cx);
+  line.setAttribute('x2', p2cx);
+  line.setAttribute('y1', horizontalY);
+  line.setAttribute('y2', horizontalY);
+  line.setAttribute('stroke','#0b1220');
+  line.setAttribute('stroke-width','2');
+  svg.appendChild(line);
+
+  // marker for arrowhead
+  const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+  const marker = document.createElementNS('http://www.w3.org/2000/svg','marker');
+  marker.setAttribute('id','arrowhead');
+  marker.setAttribute('markerWidth','10');
+  marker.setAttribute('markerHeight','10');
+  marker.setAttribute('refX','5');
+  marker.setAttribute('refY','5');
+  marker.setAttribute('orient','auto');
+  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('d','M0,0 L10,5 L0,10 z');
+  path.setAttribute('fill','#0b1220');
+  marker.appendChild(path);
+  defs.appendChild(marker);
+  svg.appendChild(defs);
+
+  // vertical connectors to each child with arrowheads
+  [ {x:c1cx}, {x:c2cx} ].forEach(item => {
+    const vx = item.x;
+    const vy1 = horizontalY;
+    const vy2 = (childrenTop - 6);
+    const vline = document.createElementNS('http://www.w3.org/2000/svg','line');
+    vline.setAttribute('x1', vx);
+    vline.setAttribute('x2', vx);
+    vline.setAttribute('y1', vy1);
+    vline.setAttribute('y2', vy2);
+    vline.setAttribute('stroke','#0b1220');
+    vline.setAttribute('stroke-width','2');
+    vline.setAttribute('marker-end','url(#arrowhead)');
+    svg.appendChild(vline);
+  });
+}
+
+// debounce helper and redraw hooks
+function debounce(fn, wait){ let t; return function(){ clearTimeout(t); t = setTimeout(()=>fn.apply(this, arguments), wait); }; }
+window.addEventListener('resize', debounce(()=>{ requestAnimationFrame(drawParentChildConnectors); }, 120));
+window.addEventListener('scroll', debounce(()=>{ requestAnimationFrame(drawParentChildConnectors); }, 120));
+
+// trigger initial draw after layout
+document.addEventListener('DOMContentLoaded', ()=>{ setTimeout(()=>{ drawParentChildConnectors(); }, 300); });
+
 })();
