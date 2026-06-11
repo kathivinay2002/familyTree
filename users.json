@@ -4,20 +4,100 @@
       "userId": "kathi",
       "password": "family123",
       "firstName": "Kathi",
-      "lastName": "Kumar",
-      "address": "123 Kathi Street, Hyderabad",
-      "zipCode": "500081",
-      "mobileNumber": "+919876543210",
+      "lastName": "Vinay",
+      "address": "123 Kathi Lane",
+      "zipCode": "560001",
+      "mobileNumber": "+919900112233",
       "maritalStatus": "Married"
     },
     {
-      "userId": "guest",
-      "password": "guest",
-      "firstName": "Guest",
-      "lastName": "User",
-      "address": "",
-      "zipCode": "",
-      "mobileNumber": "",
+      "userId": "arjun",
+      "password": "tree2026",
+      "firstName": "Arjun",
+      "lastName": "Rao",
+      "address": "45 Garden Road",
+      "zipCode": "560002",
+      "mobileNumber": "+919988776655",
+      "maritalStatus": "Single"
+    },
+    {
+      "userId": "meera",
+      "password": "meeraPW",
+      "firstName": "Meera",
+      "lastName": "Patel",
+      "address": "7 Lotus Ave",
+      "zipCode": "560010",
+      "mobileNumber": "+919977665544",
+      "maritalStatus": "Married"
+    },
+    {
+      "userId": "rahul",
+      "password": "rahulPass",
+      "firstName": "Rahul",
+      "lastName": "Sharma",
+      "address": "88 Sunrise Blvd",
+      "zipCode": "560020",
+      "mobileNumber": "+919966554433",
+      "maritalStatus": "Single"
+    },
+    {
+      "userId": "anita",
+      "password": "anita2026",
+      "firstName": "Anita",
+      "lastName": "Kumar",
+      "address": "21 River St",
+      "zipCode": "560030",
+      "mobileNumber": "+919955443322",
+      "maritalStatus": "Married"
+    },
+    {
+      "userId": "vijay",
+      "password": "vijayPW",
+      "firstName": "Vijay",
+      "lastName": "Nair",
+      "address": "3 Hilltop",
+      "zipCode": "560040",
+      "mobileNumber": "+919944332211",
+      "maritalStatus": "Single"
+    },
+    {
+      "userId": "sudha",
+      "password": "sudhaPass",
+      "firstName": "Sudha",
+      "lastName": "Iyer",
+      "address": "12 MG Road",
+      "zipCode": "560050",
+      "mobileNumber": "+919933221100",
+      "maritalStatus": "Married"
+    },
+    {
+      "userId": "pranav",
+      "password": "pranav123",
+      "firstName": "Pranav",
+      "lastName": "Menon",
+      "address": "56 Lakeview",
+      "zipCode": "560060",
+      "mobileNumber": "+919922110099",
+      "maritalStatus": "Single"
+    },
+    {
+      "userId": "neha",
+      "password": "nehaPW",
+      "firstName": "Neha",
+      "lastName": "Gupta",
+      "address": "9 Palm Street",
+      "zipCode": "560070",
+      "mobileNumber": "+919911009988",
+      "maritalStatus": "Married"
+    },
+    {
+      "userId": "sachin",
+      "password": "sachinPW",
+      "firstName": "Sachin",
+      "lastName": "Desai",
+      "address": "101 Central Park",
+      "zipCode": "560080",
+      "mobileNumber": "+919900998877",
       "maritalStatus": "Single"
     }
   ]

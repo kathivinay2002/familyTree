@@ -1,0 +1,32 @@
+name: Deploy to Cloudflare Workers (site)
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Wrangler
+        run: npm install -g wrangler@2
+
+      - name: Publish site to Cloudflare Workers
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          echo "Publishing site with wrangler..."
+          # Publish the current repo as a Workers Site. The API token must have the required permissions.
+          wrangler publish --site ./ --name kathifamilytree --account-id $CF_ACCOUNT_ID
